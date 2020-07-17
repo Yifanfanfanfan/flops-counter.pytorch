@@ -21,7 +21,7 @@ opts.add_eval_options(parser)
 opts.add_diversity_opts(parser)
 opt = parser.parse_args()
 
-with torch.cuda.device():
+#with torch.cuda.device():
 	#args = get_args()
 	#net = WDSR_B(args)
 	# net = models.densenet161()
@@ -39,13 +39,13 @@ with torch.cuda.device():
     model = models.setup(opt).cuda()
     del opt.vocab
     '''
-    cnn_model = opt.get('cnn_model', 'resnet101')
-    my_resnet = getattr(resnet, cnn_model)()
-    my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
-    net = myResnet(my_resnet)
-    flops, params = get_model_complexity_info(net, (3, 640, 427), as_strings=True, print_per_layer_stat=True)
-    # flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
-    print('{:<30}  {:<8}'.format('Computational complexity: ', flops))
-    print('{:<30}  {:<8}'.format('Number of parameters: ', params))
+cnn_model = opt.get('cnn_model', 'resnet101')
+my_resnet = getattr(resnet, cnn_model)()
+my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
+net = myResnet(my_resnet)
+flops, params = get_model_complexity_info(net, (3, 640, 427), as_strings=True, print_per_layer_stat=True)
+# flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
+print('{:<30}  {:<8}'.format('Computational complexity: ', flops))
+print('{:<30}  {:<8}'.format('Number of parameters: ', params))
 
 # 144P(256×144) 240p(426×240) 360P(640×360) 480P(854×480)
