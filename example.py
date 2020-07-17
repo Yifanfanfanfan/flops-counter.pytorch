@@ -39,7 +39,7 @@ opt.vocab = loader.get_vocab()
 model = models.setup(opt).cuda()
 del opt.vocab
 '''
-cnn_model = opt.get('cnn_model', 'resnet101')
+cnn_model = 'resnet101'
 my_resnet = getattr(resnet, cnn_model)()
 my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
 net = myResnet(my_resnet)
