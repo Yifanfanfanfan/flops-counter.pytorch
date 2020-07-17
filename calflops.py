@@ -44,12 +44,12 @@ opt = parser.parse_args()
 cnn_model = 'resnet101'
 my_resnet = getattr(resnet, cnn_model)()
 my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
-net = myResnet(my_resnet)
+model = myResnet(my_resnet)
 input = torch.randn(3, 640, 427)
 
 model.train(False)
 model.eval()
-macs, params = profile(net, inputs=(input, ))
+macs, params = profile(model, inputs=(input, ))
 # flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
 print('{:<30}  {:<8}'.format('Computational complexity: ', macs)) # GMACs
 print('{:<30}  {:<8}'.format('Number of parameters: ', params)) # M
