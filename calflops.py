@@ -45,7 +45,7 @@ cnn_model = 'resnet101'
 my_resnet = getattr(resnet, cnn_model)()
 my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
 model = myResnet(my_resnet)
-input = torch.randn(3, 640, 427)
+input = torch.randn(3, 640, 480)
 
 model.train(False)
 model.eval()
