@@ -21,7 +21,7 @@ opts.add_eval_options(parser)
 opts.add_diversity_opts(parser)
 opt = parser.parse_args()
 
-with torch.cuda.device(6):
+with torch.cuda.device(0):
 	#args = get_args()
 	#net = WDSR_B(args)
 	# net = models.densenet161()
