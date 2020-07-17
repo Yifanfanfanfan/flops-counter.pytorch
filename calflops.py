@@ -12,14 +12,18 @@ import yaml
 import wdsr_b
 from option2 import parser
 from wdsr_b import *
-from args import *
+#from args import *
 
 # parser = argparse.ArgumentParser(description='Load Models')
 # parser.add_argument('--slice_size', type=int, default=198, help='input size')
 # parser.add_argument('--devices', type=int, default=500, help='number of classes')
+import captioning.utils.opts as opts
+import captioning.models as models
+from captioning.data.dataloader import *
+from captioning.utils.resnet_utils import myResnet
+from captioning.utils import resnet
 
-
-with torch.cuda.device(6):
+#with torch.cuda.device(6):
 	# args = parser.parse_args()
 	# shrink = 0.547
 	# base_path = os.getcwd()
@@ -29,37 +33,26 @@ with torch.cuda.device(6):
 	# for folder, slice_size, device in zip(model_folder,slice_sizes,devices):
 	# 	print(folder)
 	# model = ResNet50_1d(args.slice_size,args.devices)
-	args = get_args()
-	model = WDSR_B(args)
-	input = torch.randn(3,128,128)
+# Input arguments and options
+parser = argparse.ArgumentParser()
+# Input paths
+parser.add_argument('--cnn_model', type=str,  default='resnet101',
+                help='resnet101, resnet152')
+opts.add_eval_options(parser)
+opts.add_diversity_opts(parser)
+opt = parser.parse_args()
+cnn_model = 'resnet101'
+my_resnet = getattr(resnet, cnn_model)()
+my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
+net = myResnet(my_resnet)
+input = torch.randn(3, 640, 427)
 
-	model.train(False)
-	model.eval()
-	macs, params = profile(model, inputs=(input, ))
-	# flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
-	print('{:<30}  {:<8}'.format('Computational complexity: ', macs)) # GMACs
-	print('{:<30}  {:<8}'.format('Number of parameters: ', params)) # M
+model.train(False)
+model.eval()
+macs, params = profile(net, inputs=(input, ))
+# flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
+print('{:<30}  {:<8}'.format('Computational complexity: ', macs)) # GMACs
+print('{:<30}  {:<8}'.format('Number of parameters: ', params)) # M
 
 
-	# model = ResNet50_1d_shrink(args.slice_size,args.devices,shrink)
-	# input = torch.randn(1, 2, args.slice_size)
-
-	# config = "./modelprofile/config_res50_v5.yaml"
-	# if not isinstance(config, str):
-	# 	raise Exception("filename must be a str")
-	# with open(config, "r") as stream:
-	# 	try:
-	# 		raw_dict = yaml.load(stream)
-	# 		prune_ratios = raw_dict['prune_ratios']
-	# 		for k,v in prune_ratios.items():
-	# 			prune_ratios[k] = 0
-
-	# 		model.train(False)
-	# 		model.eval()
-	# 		macs, params = profile(model, inputs=(input, ), rate = prune_ratios)
-	# 		# flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
-	# 		print('{:<30}  {:<8}'.format('Computational complexity: ', macs * 2/1000000000)) # GMACs
-	# 		print('{:<30}  {:<8}'.format('Number of parameters: ', params/1000000)) # M
-	# 	except yaml.YAMLError as exc:
-	# 		print(exc)
 
