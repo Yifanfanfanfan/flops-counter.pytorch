@@ -22,23 +22,23 @@ opts.add_diversity_opts(parser)
 opt = parser.parse_args()
 
 #with torch.cuda.device():
-	#args = get_args()
-	#net = WDSR_B(args)
-	# net = models.densenet161()
-    '''
-    ################################
-    # Build dataloader
-    ################################
-    loader = DataLoader(opt)
-    opt.vocab_size = loader.vocab_size
-    opt.seq_length = loader.seq_length
-    ##########################
-    # Build model
-    ##########################
-    opt.vocab = loader.get_vocab()
-    model = models.setup(opt).cuda()
-    del opt.vocab
-    '''
+#args = get_args()
+#net = WDSR_B(args)
+# net = models.densenet161()
+'''
+################################
+# Build dataloader
+################################
+loader = DataLoader(opt)
+opt.vocab_size = loader.vocab_size
+opt.seq_length = loader.seq_length
+##########################
+# Build model
+##########################
+opt.vocab = loader.get_vocab()
+model = models.setup(opt).cuda()
+del opt.vocab
+'''
 cnn_model = opt.get('cnn_model', 'resnet101')
 my_resnet = getattr(resnet, cnn_model)()
 my_resnet.load_state_dict(torch.load('data/imagenet_weights/'+ cnn_model+'.pth'))
