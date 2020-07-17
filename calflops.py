@@ -13,7 +13,7 @@ import wdsr_b
 from option2 import parser
 from wdsr_b import *
 #from args import *
-
+import math
 # parser = argparse.ArgumentParser(description='Load Models')
 # parser.add_argument('--slice_size', type=int, default=198, help='input size')
 # parser.add_argument('--devices', type=int, default=500, help='number of classes')
@@ -51,8 +51,8 @@ model.train(False)
 model.eval()
 macs, params = profile(model, inputs=(input, ))
 # flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)
-print('{:<30}  {:<8}'.format('Computational complexity: ', macs)) # GMACs
-print('{:<30}  {:<8}'.format('Number of parameters: ', params)) # M
+print('{:<30}  {:<8}'.format('Computational complexity: ', macs/pow(10,9))) # GMACs
+print('{:<30}  {:<8}'.format('Number of parameters: ', params/pow(10,6))) # M
 
 
 
