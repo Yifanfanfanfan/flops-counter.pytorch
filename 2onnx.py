@@ -35,7 +35,7 @@ from skimage import io
 #from args import *
 import captioning.utils.opts as opts
 import captioning.models as models
-
+import captioning.utils.misc as utils
 def main():
 
     use_gpu = torch.cuda.is_available()
