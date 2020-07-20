@@ -51,20 +51,26 @@ def main():
 
     # model = torch.nn.DataParallel(model)
     # model.load_state_dict(new_state_dict)
-    checkpoint = torch.load("./checkpoint/checkpoint6/model_epoch133_step1.pth")
+    checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
     model.load_state_dict(checkpoint["model"].state_dict())
 
     # print(model)
-    input_shape = (1, 256, 256)
+    #input_shape = (1, 256, 256)
+    cocotest_bu_fc_size = (10, 2048)
+    cocotest_bu_att_size = (10, 0, 0)
+    labels_size = (10, 5, 18)
+    masks_size = (10, 5, 18)
     model_onnx_path = "./wdsr_b.onnx"
     model.train(False)
 
     # Export the model to an ONNX file
-    dummy_input = Variable(torch.randn(1, *input_shape))
-    output = torch_onnx.export(model, 
-                              dummy_input, 
-                              model_onnx_path, 
-                              verbose=False)
+    #dummy_input = Variable(torch.randn(1, *input_shape))
+    dummy_cocotest_bu_fc = Variable(torch.randn(10, 2048))
+    dummy_cocotest_bu_att = Variable(torch.randn(10, 0, 0))
+    dummy_labels = Variable(torch.randint(5200, (10, 5, 18)))
+    dummy_masks = Variable(torch.randint(1, (10, 5, 18)))
+    #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
+    output = torch_onnx.export(model, dummy_cocotest_bu_fc, dummy_cocotest_bu_att, dummy_labels, dummy_masks, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
 
 
