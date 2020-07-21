@@ -84,11 +84,13 @@ def main():
     # labels_size = (10, 5, 18)
     # masks_size = (10, 5, 18)
     model_onnx_path = "./resnet101.onnx"
+    input_shape = (3, 640, 480)
     model.train(False)
+    model.eval()
 
     # Export the model to an ONNX file
     # dummy_input = Variable(torch.randn(1, *input_shape))
-    dummy_input = Variable(torch.randn(3, 640, 480))
+    dummy_input = Variable(torch.randn(1, *input_shape))
     #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
     output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
