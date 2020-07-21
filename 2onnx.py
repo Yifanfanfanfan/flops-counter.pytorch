@@ -114,7 +114,6 @@ def main():
 
 def check():
 
-parser = argparse.ArgumentParser()
     # Input paths
     parser.add_argument('--model', type=str, default='',
                 help='path to model to evaluate')
