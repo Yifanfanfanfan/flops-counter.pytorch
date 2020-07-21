@@ -89,7 +89,7 @@ def main():
     model = models.setup(opt)
     
     checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
-    model.load_state_dict(checkpoint["model"].state_dict())
+    model.load_state_dict(checkpoint)
 
     # print(model)
     #input_shape = (1, 256, 256)
