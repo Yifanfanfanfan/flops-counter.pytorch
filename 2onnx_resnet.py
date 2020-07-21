@@ -67,12 +67,13 @@ def main():
     opt = parser.parse_args()
     cnn_model = 'resnet101'
     my_resnet = getattr(resnet, cnn_model)()
-    print('create my_resnet!')
-    my_resnet.load_state_dict(torch.load('/home/zzgyf/github_yifan/ImageCaptioning.pytorch/data/imagenet_weights/'+ cnn_model+'.pth'))
-    print('load parameters!')
-    model = myResnet(my_resnet)
-    print('myResnet established!')
     
+    my_resnet.load_state_dict(torch.load('/home/zzgyf/github_yifan/ImageCaptioning.pytorch/data/imagenet_weights/'+ cnn_model+'.pth'))
+
+    model = myResnet(my_resnet)
+
+    if isinstance(model, torch.nn.DataParallel):         
+        model = model.module
 
     #checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
     #model.load_state_dict(checkpoint)
