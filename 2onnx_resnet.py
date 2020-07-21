@@ -67,12 +67,17 @@ def main():
     opt = parser.parse_args()
     cnn_model = 'resnet101'
     my_resnet = getattr(resnet, cnn_model)()
-    
-    my_resnet.load_state_dict(torch.load('/home/zzgyf/github_yifan/ImageCaptioning.pytorch/data/imagenet_weights/'+ cnn_model+'.pth'))
+    state_dict = torch.load('/home/zzgyf/github_yifan/ImageCaptioning.pytorch/data/imagenet_weights/'+ cnn_model+'.pth')
 
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+                    k = k.replace('module.', '')
+                    new_state_dict[k] = v
+    my_resnet.load_state_dict(new_state_dict)
+                    
     model = myResnet(my_resnet)
 
-    model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
+    # model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
     # if isinstance(model, torch.nn.DataParallel):         
     #     model = model.module
 
@@ -91,9 +96,9 @@ def main():
 
     # Export the model to an ONNX file
     # dummy_input = Variable(torch.randn(1, *input_shape))
-    dummy_input = Variable(torch.randn(*input_shape)).cuda()
+    dummy_input = Variable(torch.randn(*input_shape))
     #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
-    output = torch_onnx.export(model.module, dummy_input, model_onnx_path, verbose=False)
+    output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
 
 
