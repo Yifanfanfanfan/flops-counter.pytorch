@@ -90,7 +90,7 @@ def main():
 
     # Export the model to an ONNX file
     # dummy_input = Variable(torch.randn(1, *input_shape))
-    dummy_input = Variable(torch.randn(1, *input_shape))
+    dummy_input = Variable(torch.randn(*input_shape))
     #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
     output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
