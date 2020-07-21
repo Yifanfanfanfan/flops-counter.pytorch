@@ -114,14 +114,76 @@ def main():
 
 def check():
 
-    # Load the ONNX model
-    model = onnx.load("image_captioning.onnx")
+parser = argparse.ArgumentParser()
+    # Input paths
+    parser.add_argument('--model', type=str, default='',
+                help='path to model to evaluate')
+    parser.add_argument('--cnn_model', type=str,  default='resnet101',
+                help='resnet101, resnet152')
+    parser.add_argument('--infos_path', type=str, default='',
+                help='path to infos to evaluate')
+    parser.add_argument('--only_lang_eval', type=int, default=0,
+                help='lang eval on saved results')
+    parser.add_argument('--force', type=int, default=0,
+                help='force to evaluate no matter if there are results available')
+    opts.add_eval_options(parser)
+    opts.add_diversity_opts(parser)
+    opt = parser.parse_args()
+    opt.caption_model = 'newfc'
+    opt.infos_path = '/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/infos_fc_nsc-best.pkl'
+    with open(opt.infos_path, 'rb') as f:
+        infos = utils.pickle_load(f)
 
-    # Check that the IR is well formed
-    onnx.checker.check_model(model)
+    replace = ['input_fc_dir', 'input_att_dir', 'input_box_dir', 'input_label_h5', 'input_json', 'batch_size', 'id']
+    ignore = ['start_from']
 
-    # Print a human readable representation of the graph
-    onnx.helper.printable_graph(model.graph)
+    for k in vars(infos['opt']).keys():
+        if k in replace:
+            setattr(opt, k, getattr(opt, k) or getattr(infos['opt'], k, ''))
+        elif k not in ignore:
+            if not k in vars(opt):
+                vars(opt).update({k: vars(infos['opt'])[k]}) # copy over options from model
+
+    vocab = infos['vocab'] # ix -> word mapping
+
+    opt.vocab = vocab
+    model = models.setup(opt)
+
+    checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
+    model.load_state_dict(checkpoint)
+
+    # torch.nn.utils.remove_weight_norm(model.head[0])
+    # for i in range(2):
+    #     for j in [0,2,3]:
+    #         torch.nn.utils.remove_weight_norm(model.body[i].body[j])
+    # torch.nn.utils.remove_weight_norm(model.tail[0])
+    # torch.nn.utils.remove_weight_norm(model.skip[0])
+
+    model.eval()
+    ort_session = onnxruntime.InferenceSession("image_captioning.onnx")
+
+    dummy_cocotest_bu_fc = Variable(torch.randn(10, 2048))
+    dummy_cocotest_bu_att = Variable(torch.randn(10, 0, 0))
+    dummy_labels = Variable(torch.randint(5200, (10, 5, 18)))
+    dummy_masks = Variable(torch.randint(1, (10, 5, 18)))
+    x = (dummy_cocotest_bu_fc, dummy_cocotest_bu_att, dummy_labels, dummy_masks)
+    #x = torch.randn(1, 3, 392, 392, requires_grad=False)
+    #torch_out = model(x)
+    # # Load the ONNX model
+    # model = onnx.load("wdsr_b.onnx")
+
+    # # Check that the IR is well formed
+    # onnx.checker.check_model(model)
+
+    # # Print a human readable representation of the graph
+    # onnx.helper.printable_graph(model.graph)
+
+    # compute ONNX Runtime output prediction
+    ort_inputs = {ort_session.get_inputs()[0].name: to_numpy(x)}
+    ort_outs = ort_session.run(None, ort_inputs)
+
+    # compare ONNX Runtime and PyTorch results
+    np.testing.assert_allclose(to_numpy(torch_out), ort_outs[0], rtol=1e-03, atol=1e-05)
 
 if __name__ == '__main__':
     main()
