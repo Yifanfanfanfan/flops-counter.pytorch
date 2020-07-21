@@ -87,7 +87,7 @@ def main():
 
     opt.vocab = vocab
     model = models.setup(opt)
-    
+
     checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
     model.load_state_dict(checkpoint)
 
@@ -107,7 +107,7 @@ def main():
     dummy_labels = Variable(torch.randint(5200, (10, 5, 18)))
     dummy_masks = Variable(torch.randint(1, (10, 5, 18)))
     #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
-    output = torch_onnx.export(model, dummy_cocotest_bu_fc, dummy_cocotest_bu_att, dummy_labels, dummy_masks, model_onnx_path, verbose=False)
+    output = torch_onnx.export(model, dummy_cocotest_bu_fc,  dummy_labels, dummy_masks, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
 
 
