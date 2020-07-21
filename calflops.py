@@ -8,10 +8,7 @@ import sys
 # from resnet_1d import ResNet50_1d
 # from resnet_1d_lite import ResNet50_1d_shrink
 from thop import profile
-import yaml
-import wdsr_b
-from option2 import parser
-from wdsr_b import *
+
 #from args import *
 import math
 # parser = argparse.ArgumentParser(description='Load Models')
