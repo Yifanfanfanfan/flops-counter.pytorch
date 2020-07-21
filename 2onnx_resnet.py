@@ -72,8 +72,9 @@ def main():
 
     model = myResnet(my_resnet)
 
-    if isinstance(model, torch.nn.DataParallel):         
-        model = model.module
+    model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
+    # if isinstance(model, torch.nn.DataParallel):         
+    #     model = model.module
 
     #checkpoint = torch.load("/home/zzgyf/github_yifan/ImageCaptioning.pytorch/models/model-best.pth")
     #model.load_state_dict(checkpoint)
@@ -92,7 +93,7 @@ def main():
     # dummy_input = Variable(torch.randn(1, *input_shape))
     dummy_input = Variable(torch.randn(*input_shape))
     #output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=False)
-    output = torch_onnx.export(model, dummy_input, model_onnx_path, verbose=True)
+    output = torch_onnx.export(model.module, dummy_input, model_onnx_path, verbose=False)
     print("Export of torch_model.onnx complete!")
 
 
