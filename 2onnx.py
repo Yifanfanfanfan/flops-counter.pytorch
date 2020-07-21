@@ -102,7 +102,7 @@ def main():
 
     # Export the model to an ONNX file
     # dummy_input = Variable(torch.randn(1, *input_shape))
-    dummy_input = Variable(torch.randn(10, 2048), torch.randn(10, 0, 0), torch.randint(5200, (10, 5, 18)) torch.randint(1, (10, 5, 18)))
+    dummy_input = Variable(torch.randn(10, 2048), torch.randn(10, 0, 0), torch.randint(5200, (10, 5, 18)), torch.randint(1, (10, 5, 18)))
     # dummy_cocotest_bu_fc = Variable(torch.randn(10, 2048))
     # dummy_cocotest_bu_att = Variable(torch.randn(10, 0, 0))
     # dummy_labels = Variable(torch.randint(5200, (10, 5, 18)))
